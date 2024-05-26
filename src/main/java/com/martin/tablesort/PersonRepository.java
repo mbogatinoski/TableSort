@@ -1,2 +1,6 @@
-package com.martin.tablesort;public interface PersonRepository {
+package com.martin.tablesort;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PersonRepository extends JpaRepository<Person, Long> {
 }

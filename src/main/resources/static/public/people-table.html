@@ -1,0 +1,384 @@
+<!DOCTYPE html><!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>People Table</title>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: auto
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .pagination button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .pagination button:hover {
+            background-color: #45a049;
+        }
+
+        a {
+            text-decoration: none;
+            display: inline-block;
+            padding: 8px 16px;
+        }
+
+        a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .previous {
+            background-color: #f1f1f1;
+            color: black;
+        }
+
+        .next {
+            background-color: #04AA6D;
+            color: white;
+        }
+
+        .round {
+            border-radius: 50%;
+        }
+
+        .add-person-btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        .add-person-btn:hover {
+            background-color: #45a049;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center; /* Center the pagination controls */
+            margin: 20px 0;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .edit-btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .edit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .delete-btn:hover {
+            background-color: #f44336;
+        }
+
+        .current-page {
+            font-size: 14px;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            border: 2px solid #4CAF50;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        .total-pages {
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            border: 2px solid #4CAF50;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        .slash {
+            margin: 0 10px;
+            font-size: 32px;
+            color: #4CAF50;
+        }
+
+        .sort-arrow {
+            color: #333;
+            text-decoration: none;
+            padding: 0 5px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 20% auto; /* Increase the top margin to center the modal vertically */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%; /* Reduce the width of the modal */
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Add a shadow for a nicer look */
+            border-radius: 10px; /* Add rounded corners for a nicer look */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #addPersonForm label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #addPersonForm input[type="text"],
+        #addPersonForm input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        #addPersonForm input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #addPersonForm input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+    <button class="add-person-btn" onclick="location.href='/add-person'">Add New Person</button>
+        <div id="addPersonModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <form id="addPersonForm">
+                    <label for="firstName">First Name:</label><br>
+                    <input required type="text" id="firstName" name="firstName"><br>
+                    <label for="lastName">Last Name:</label><br>
+                    <input required type="text" id="lastName" name="lastName"><br>
+                    <label for="age">Age:</label><br>
+                    <input required min="0" type="number" id="age" name="age"><br>
+                    <input id="submitBtn" type="submit" value="Add Person">
+                </form>
+            </div>
+        </div>
+    <table>
+        <tr>
+            <th>
+                First Name
+                <a th:if="${sortBy != 'firstName' or sortDirection == 'desc'}" onclick="sortTable('firstName', 'asc')">↑</a>
+                <a th:if="${sortBy == 'firstName' and sortDirection == 'asc'}" onclick="sortTable('firstName', 'desc')">↓</a>
+            </th>
+            <th>
+                Last Name
+                <a th:if="${sortBy != 'lastName' or sortDirection == 'desc'}" onclick="sortTable('lastName', 'asc')">↑</a>
+                <a th:if="${sortBy == 'lastName' and sortDirection == 'asc'}" onclick="sortTable('lastName', 'desc')">↓</a>
+            </th>
+            <th>
+                Age
+                <a th:if="${sortBy != 'age' or sortDirection == 'desc'}" onclick="sortTable('age', 'asc')">↑</a>
+                <a th:if="${sortBy == 'age' and sortDirection == 'asc'}" onclick="sortTable('age', 'desc')">↓</a>
+            </th></th>
+            <th>Actions</th>
+        </tr>
+        <tr th:each="person : ${people}">
+            <td th:text="${person.firstName}"></td>
+            <td th:text="${person.lastName}"></td>
+            <td th:text="${person.age}"></td>
+            <td>
+                <a class="edit-btn" th:data-id="${person.id}" th:data-first-name="${person.firstName}" th:data-last-name="${person.lastName}" th:data-age="${person.age}" onclick="openEditModal(this)">Edit</a>
+                <a class="delete-btn" th:href="@{'/delete-person/' + ${person.id}}" onclick="return confirm('Are you sure you want to delete this person?')">Delete</a>
+            </td>
+        </tr>
+    </table>
+    </div>
+    <div class="pagination">
+        <a class="previous" th:if="${currentPage > 0}" th:href="@{/people-table(page=${currentPage - 1}, size=10)}">&laquo; Previous</a>
+        <span class="current-page" th:text="${currentPage + 1}"></span>
+        <span class="slash">/</span>
+        <span class="total-pages" th:text="${totalPages}"></span>
+        <a class="next" th:if="${currentPage < totalPages - 1}" th:href="@{/people-table(page=${currentPage + 1}, size=10)}">Next &raquo;</a>
+    </div>
+    <div th:if="${confirmation}" th:text="${confirmation}"></div>
+</body>
+<script>
+    function sortTable(sortBy, sortDirection) {
+        var currentPage = document.querySelector('.current-page').textContent.trim() - 1;
+        var url = `/people-table?page=${currentPage}&size=10&sortBy=${sortBy}&sortDirection=${sortDirection}`;
+        window.location.href = url;
+    }
+
+    var modal = document.getElementById("addPersonModal");
+    var btn = document.getElementsByClassName("add-person-btn")[0];
+    var span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    function openCreateModal() {
+        document.getElementById("firstName").value = "";
+        document.getElementById("lastName").value = "";
+        document.getElementById("age").value = "";
+        document.getElementById("submitBtn").value = "Add Person";
+        modal.style.display = "block";
+
+        document.getElementById("addPersonForm").onsubmit = function(event) {
+            event.preventDefault();
+            var firstName = document.getElementById("firstName").value;
+            var lastName = document.getElementById("lastName").value;
+            var age = document.getElementById("age").value;
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/add-person", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    modal.style.display = "none";
+                    location.reload();
+                }
+            }
+            xhr.send("firstName=" + firstName + "&lastName=" + lastName + "&age=" + age);
+        }
+    }
+
+    var btn = document.getElementsByClassName("add-person-btn")[0];
+    btn.onclick = function() {
+        openCreateModal();
+    }
+
+    function openEditModal(button) {
+        var firstName = button.dataset.firstName;
+        var lastName = button.dataset.lastName;
+        var age = button.dataset.age;
+        var id = button.dataset.id;
+        document.getElementById("submitBtn").value = "Update";
+        document.getElementById("firstName").value = firstName;
+        document.getElementById("lastName").value = lastName;
+        document.getElementById("age").value = age;
+        modal.style.display = "block";
+
+        document.getElementById("addPersonForm").onsubmit = function(event) {
+            event.preventDefault();
+            var firstName = document.getElementById("firstName").value;
+            var lastName = document.getElementById("lastName").value;
+            var age = document.getElementById("age").value;
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/update-person/" + id, true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    modal.style.display = "none";
+                    location.reload();
+                }
+            }
+            xhr.send("firstName=" + firstName + "&lastName=" + lastName + "&age=" + age);
+        }
+    }
+
+    span.onclick = function() {
+        modal.style.display = "none";
+        document.getElementById("submitBtn").value = "Add Person";
+    }
+
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+            document.getElementById("submitBtn").value = "Add Person";
+        }
+    }
+</script>
+</html>

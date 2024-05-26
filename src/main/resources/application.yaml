@@ -1,1 +1,20 @@
-spring.application.name=TableSort
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5458/people-db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: none
+      show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  thymeleaf:
+    cache: false
+    prefix: classpath:/static/public/
